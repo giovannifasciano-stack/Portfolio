@@ -33,13 +33,16 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
 .pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border:.5px solid var(--b2);border-radius:100px;font-size:9px;letter-spacing:.1em;color:var(--mu);text-transform:uppercase;white-space:nowrap}
 .pill-dot{width:6px;height:6px;border-radius:50%;background:var(--mu2);flex-shrink:0;transition:background .4s}
 .pill-dot.open{background:var(--green);animation:blink 2s infinite}
-.pill-dot.after{background:var(--gold)}
+.pill-dot.pre,.pill-dot.after,.pill-dot.closed-ext{background:var(--gold)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
 /* ── TOTAL ── */
 .total{background:var(--s1);border:.5px solid var(--b1);border-radius:var(--r);padding:22px 22px 20px;margin-bottom:18px;position:relative;overflow:hidden}
 .total::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.055) 0%,transparent 70%);pointer-events:none}
-.total-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--mu);margin-bottom:10px}
+.total-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--mu);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.total-mode{font-size:8px;letter-spacing:.1em;padding:2px 7px;border-radius:100px;border:.5px solid var(--b2);color:var(--mu)}
+.total-mode.rt{color:var(--green);border-color:rgba(62,207,130,.3);background:rgba(62,207,130,.08)}
+.total-mode.ext{color:var(--gold);border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.08)}
 .total-val{font-family:'Outfit',sans-serif;font-size:34px;font-weight:800;letter-spacing:-1.5px;line-height:1;display:flex;align-items:baseline;gap:3px}
 .total-curr{font-size:16px;color:var(--gold);font-weight:700;align-self:flex-start;margin-top:4px}
 .total-int{color:var(--tx)}
@@ -66,6 +69,9 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
 .ico-a{background:rgba(59,130,246,.12);color:#60a5fa}
 .ico-g{background:rgba(52,211,153,.12);color:#34d399}
 .ico-n{background:rgba(167,139,250,.12);color:#a78bfa}
+.ico-s{background:rgba(251,146,60,.12);color:#fb923c}
+.sec-div{display:flex;align-items:center;gap:12px;margin:26px 2px 14px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mu)}
+.sec-div::before,.sec-div::after{content:'';height:.5px;background:var(--b1);flex:1}
 .c-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:14px}
 .c-sub{font-size:10px;color:var(--mu);margin-top:2px;letter-spacing:.04em}
 .c-right{text-align:right;min-width:110px}
@@ -73,6 +79,9 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
 .c-price.flash-up{color:var(--green)}.c-price.flash-dn{color:var(--red)}
 .c-chg{font-size:11px;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .c-chg.pos{color:var(--green)}.c-chg.neg{color:var(--red)}.c-chg.neu{color:var(--mu)}
+.sess-tag{display:inline-block;margin-top:6px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:100px;border:.5px solid var(--b2);color:var(--mu)}
+.sess-tag.rt{color:var(--green);border-color:rgba(62,207,130,.3);background:rgba(62,207,130,.08)}
+.sess-tag.ext{color:var(--gold);border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.08)}
 
 /* ── INPUT ROW ── */
 .c-bot{padding:12px 18px 16px;border-top:.5px solid var(--b1);display:flex;align-items:center;gap:14px}
@@ -95,6 +104,7 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
 @keyframes spin{to{transform:rotate(360deg)}}
 .status-txt{font-size:10px;color:var(--mu);letter-spacing:.05em;text-align:center;min-height:14px}
 .err-txt{color:var(--red)}
+.src-line{text-align:center;font-size:9px;color:var(--mu2);letter-spacing:.05em;margin-top:8px}
 
 /* ── COUNTDOWN ── */
 .countdown{display:flex;align-items:center;justify-content:center;gap:8px;font-size:10px;color:var(--mu)}
@@ -117,7 +127,7 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
   </div>
 
   <div class="total">
-    <div class="total-lbl">Total Portfolio Value</div>
+    <div class="total-lbl">Total Portfolio Value <span class="total-mode" id="total-mode">—</span></div>
     <div class="total-val">
       <span class="total-curr">$</span>
       <span class="total-int" id="t-int">0</span>
@@ -146,6 +156,7 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
       <div class="c-right">
         <div class="c-price" id="px-AAPL">—</div>
         <div class="c-chg neu" id="chg-AAPL">loading...</div>
+        <span class="sess-tag" id="sess-AAPL"></span>
       </div>
     </div>
     <div class="c-bot">
@@ -164,6 +175,7 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
       <div class="c-right">
         <div class="c-price" id="px-GOOGL">—</div>
         <div class="c-chg neu" id="chg-GOOGL">loading...</div>
+        <span class="sess-tag" id="sess-GOOGL"></span>
       </div>
     </div>
     <div class="c-bot">
@@ -182,11 +194,45 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
       <div class="c-right">
         <div class="c-price" id="px-NVDA">—</div>
         <div class="c-chg neu" id="chg-NVDA">loading...</div>
+        <span class="sess-tag" id="sess-NVDA"></span>
       </div>
     </div>
     <div class="c-bot">
       <div class="inp-wrap"><div class="inp-lbl">Shares</div><input class="qty" type="number" id="q-NVDA" placeholder="0" min="0" inputmode="decimal"></div>
       <div class="val-wrap"><div class="val-lbl">Value</div><div class="val-num zero" id="v-NVDA">—</div></div>
+    </div>
+  </div>
+
+  <div class="sec-div"><span>SpaceX</span></div>
+
+  <div class="total">
+    <div class="total-lbl">SpaceX Portfolio Value <span class="total-mode" id="total-mode2">—</span></div>
+    <div class="total-val">
+      <span class="total-curr">$</span>
+      <span class="total-int" id="t2-int">0</span>
+      <span class="total-dec" id="t2-dec">.00</span>
+    </div>
+    <div class="total-rows">
+      <div class="total-row">SPCX <b id="m-spcx">—</b></div>
+    </div>
+  </div>
+
+  <!-- SPCX -->
+  <div class="card" id="card-SPCX">
+    <div class="c-top">
+      <div class="c-left">
+        <div class="c-ico ico-s">SPCX</div>
+        <div><div class="c-name">SpaceX</div><div class="c-sub">NASDAQ · SPCX</div></div>
+      </div>
+      <div class="c-right">
+        <div class="c-price" id="px-SPCX">—</div>
+        <div class="c-chg neu" id="chg-SPCX">loading...</div>
+        <span class="sess-tag" id="sess-SPCX"></span>
+      </div>
+    </div>
+    <div class="c-bot">
+      <div class="inp-wrap"><div class="inp-lbl">Shares</div><input class="qty" type="number" id="q-SPCX" placeholder="0" min="0" inputmode="decimal"></div>
+      <div class="val-wrap"><div class="val-lbl">Value</div><div class="val-num zero" id="v-SPCX">—</div></div>
     </div>
   </div>
 
@@ -203,37 +249,65 @@ body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;
       </svg>
       Refresh Prices
     </button>
+    <div class="src-line" id="src-line"></div>
+    <div class="src-line" id="sync-line"></div>
   </div>
 
 </div>
 <script>
-const KEY = 'd7qbje1r01qi8jamrjqgd7qbje1r01qi8jamrjr0';
-const SYMS = ['AAPL','GOOGL','NVDA'];
-const prices = {}, prevClose = {};
-let ws = null, cdTimer = null, cdVal = 30;
+/* ─────────────────────────────────────────────────────────────
+   OPZIONALE — proxy personale per un feed sempre affidabile.
+   Incolla qui l'URL del tuo Cloudflare Worker (terminante con ?u= o &url= ).
+   Worker (8 righe):
+     export default { async fetch(req){
+       const u = new URL(req.url).searchParams.get('u');
+       if(!u) return new Response('missing u',{status:400});
+       const r = await fetch(decodeURIComponent(u));
+       const h = new Headers(r.headers);
+       h.set('access-control-allow-origin','*');
+       return new Response(r.body,{status:r.status,headers:h});
+     }}
+   Esempio: const SELF_PROXY = 'https://mio-worker.tuonome.workers.dev/?u=';
+   ───────────────────────────────────────────────────────────── */
+const SELF_PROXY = '';
 
-// ── Market status ──
-function mkt() {
+const SYMS = ['AAPL','GOOGL','NVDA','SPCX'];
+const MAIN = ['AAPL','GOOGL','NVDA'];
+const SPX  = ['SPCX'];
+const prices = {}, prevClose = {};
+let cdTimer = null, cdVal = 15, lastSource = '—';
+const REFRESH = 15; // secondi
+
+// ── Market status (ET): open / pre / after / closed ──
+function mktState() {
   const et = new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));
   const d = et.getDay(), m = et.getHours()*60+et.getMinutes();
   if(d===0||d===6) return 'closed';
-  if(m>=570&&m<960) return 'open';
-  if((m>=240&&m<570)||(m>=960&&m<1200)) return 'after';
+  if(m>=570&&m<960) return 'open';        // 09:30–16:00
+  if(m>=240&&m<570) return 'pre';         // 04:00–09:30
+  if(m>=960&&m<1200) return 'after';      // 16:00–20:00
   return 'closed';
 }
 function updatePill() {
-  const s = mkt();
+  const s = mktState();
   const dot = document.getElementById('pill-dot');
   const txt = document.getElementById('pill-txt');
-  dot.className = 'pill-dot '+s;
-  txt.textContent = s==='open'?'Market Open':s==='after'?'After Hours':'Market Closed';
+  dot.className = 'pill-dot ' + (s==='closed'?'closed-ext':s);
+  txt.textContent = s==='open'?'Market Open':s==='pre'?'Pre-Market':s==='after'?'After Hours':'Market Closed';
+  // total panel mode badge
+  ['total-mode','total-mode2'].forEach(id=>{
+    const tm = document.getElementById(id);
+    if(!tm) return;
+    if(s==='open'){tm.textContent='Real Time';tm.className='total-mode rt';}
+    else{tm.textContent='Ext. Hours';tm.className='total-mode ext';}
+  });
 }
 
 // ── Format ──
 function usd(n) { return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 // ── Render price ──
-function renderPrice(sym, price, pc) {
+function renderPrice(sym, price, pc, state) {
   prices[sym] = price;
   if(pc) prevClose[sym] = pc;
   const prev = prevClose[sym] || 0;
@@ -245,7 +319,6 @@ function renderPrice(sym, price, pc) {
   pxEl.dataset.price = price;
   pxEl.textContent = '$'+price.toFixed(2);
 
-  // Flash animation on price change
   if(oldPrice && price !== oldPrice) {
     const cls = price > oldPrice ? 'flash-up' : 'flash-dn';
     pxEl.classList.add(cls);
@@ -259,99 +332,194 @@ function renderPrice(sym, price, pc) {
     chgEl.className = 'c-chg '+(change>=0?'pos':'neg');
   }
 
+  const tag = document.getElementById('sess-'+sym);
+  if(state==='open'){tag.textContent='Real Time';tag.className='sess-tag rt';}
+  else if(state==='pre'){tag.textContent='Pre-Market';tag.className='sess-tag ext';}
+  else if(state==='after'){tag.textContent='After Hours';tag.className='sess-tag ext';}
+  else {tag.textContent='Ext · Closed';tag.className='sess-tag ext';}
+
   const card = document.getElementById('card-'+sym);
   if(prev) card.className = 'card '+(change>=0?'pos':'neg');
 
   calcTotal();
 }
 
-// ── Total ──
+// ── Totals (due totali separati) ──
+function symValue(s){
+  const qty = parseFloat(document.getElementById('q-'+s).value)||0;
+  const p = prices[s];
+  const vEl = document.getElementById('v-'+s);
+  const mEl = document.getElementById('m-'+s.toLowerCase());
+  if(p && qty>0){const v=qty*p;vEl.textContent=usd(v);vEl.classList.remove('zero');if(mEl)mEl.textContent=usd(v);return v;}
+  vEl.textContent='—';vEl.classList.add('zero');if(mEl)mEl.textContent='—';return 0;
+}
+function writeTotal(pfx,val){
+  const[i,d]=val.toFixed(2).split('.');
+  document.getElementById(pfx+'-int').textContent=parseInt(i).toLocaleString('en-US');
+  document.getElementById(pfx+'-dec').textContent='.'+d;
+}
 function calcTotal() {
-  let tot = 0;
-  SYMS.forEach(s => {
-    const qty = parseFloat(document.getElementById('q-'+s).value)||0;
-    const p = prices[s];
-    const vEl = document.getElementById('v-'+s);
-    const mEl = document.getElementById('m-'+s.toLowerCase());
-    if(p && qty>0){const v=qty*p;tot+=v;vEl.textContent=usd(v);vEl.classList.remove('zero');mEl.textContent=usd(v);}
-    else{vEl.textContent='—';vEl.classList.add('zero');mEl.textContent='—';}
-  });
-  const[i,d]=tot.toFixed(2).split('.');
-  document.getElementById('t-int').textContent=parseInt(i).toLocaleString('en-US');
-  document.getElementById('t-dec').textContent='.'+d;
+  let a=0; MAIN.forEach(s=>a+=symValue(s)); writeTotal('t', a);
+  let b=0; SPX.forEach(s=>b+=symValue(s)); writeTotal('t2', b);
 }
 SYMS.forEach(s=>{
   const el=document.getElementById('q-'+s);
-  const sv=localStorage.getItem('qty_'+s);
-  if(sv) el.value=sv;
-  el.addEventListener('input',()=>{localStorage.setItem('qty_'+s,el.value);calcTotal();});
+  el.addEventListener('input',()=>{calcTotal();queueSave();});
 });
 
-// ── REST fetch ──
-async function fetchQuote(sym) {
-  const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${KEY}`);
-  if(!r.ok) throw new Error(r.status);
-  return r.json();
+/* ─────────────────────────────────────────────────────────────
+   SYNC CONDIVISA fra device — JSONBin.io (come GlowScale).
+   1) Vai su jsonbin.io (sei già registrato) → Create Bin
+   2) Contenuto del bin:  {}
+   3) Save → copia il Bin ID e incollalo qui sotto.
+   La Master Key è già la tua (quella di GlowScale, va bene anche qui).
+   ───────────────────────────────────────────────────────────── */
+const JSONBIN_KEY = '$2a$10$VNTj6CT9PBlMxuJPipL3tutUeRZJQGMAkjbIqOyxSGPpiBF7U7p.K';
+const JSONBIN_ID  = '6a46880af5f4af5e2954d478';
+const JSONBIN_API = 'https://api.jsonbin.io/v3/b/'+JSONBIN_ID;
+const SYNC_ON = JSONBIN_ID && !JSONBIN_ID.startsWith('INCOLLA');
+
+function setSync(t){const el=document.getElementById('sync-line');if(el)el.textContent=t;}
+
+async function loadQty(){
+  // 1) cache locale per rendering istantaneo
+  SYMS.forEach(s=>{const sv=localStorage.getItem('qty_'+s);if(sv)document.getElementById('q-'+s).value=sv;});
+  calcTotal();
+  if(!SYNC_ON){setSync('sync off · imposta JSONBIN_ID');return;}
+  // 2) tira le quantità condivise dal cloud
+  setSync('sync…');
+  try{
+    const r=await fetch(JSONBIN_API+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY,'X-Bin-Meta':'false'},cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    SYMS.forEach(s=>{
+      if(data && data[s]!=null && data[s]!==''){
+        document.getElementById('q-'+s).value=data[s];
+        localStorage.setItem('qty_'+s,data[s]);
+      }
+    });
+    calcTotal();
+    setSync('synced ✓');
+  }catch(e){setSync('offline · quantità locali');}
 }
 
+let saveT=null;
+async function saveQty(){
+  const data={};
+  SYMS.forEach(s=>{const v=document.getElementById('q-'+s).value||'';data[s]=v;localStorage.setItem('qty_'+s,v);});
+  if(!SYNC_ON) return;
+  setSync('saving…');
+  try{
+    const r=await fetch(JSONBIN_API,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    setSync('saved ✓');
+  }catch(e){setSync('offline · solo su questo device');}
+}
+function queueSave(){clearTimeout(saveT);saveT=setTimeout(saveQty,700);}
+
+// riallinea quando torni sull'app (es. la apri su un altro device)
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SYNC_ON)loadQty();});
+
+// ── Data: Yahoo chart incl. pre/post, via best available access path ──
+function yurl(sym){return 'https://query1.finance.yahoo.com/v8/finance/chart/'+sym+'?includePrePost=true&interval=1m&range=1d';}
+function sources(sym){
+  const u = yurl(sym), S = [];
+  if(SELF_PROXY) S.push({name:'your-proxy', url:SELF_PROXY+encodeURIComponent(u)});
+  S.push(
+    {name:'allorigins', url:'https://api.allorigins.win/raw?url='+encodeURIComponent(u)},
+    {name:'codetabs',   url:'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u)},
+    {name:'jina',       url:'https://r.jina.ai/'+u},
+    {name:'corsproxy',  url:'https://corsproxy.io/?url='+encodeURIComponent(u)},
+    {name:'direct',     url:u}
+  );
+  return S;
+}
+function extractJSON(text){
+  try{return JSON.parse(text);}catch(_){}
+  const i=text.indexOf('{"chart"');if(i>=0){try{return JSON.parse(text.slice(i));}catch(_){}}
+  const a=text.indexOf('{'),b=text.lastIndexOf('}');
+  if(a>=0&&b>a){try{return JSON.parse(text.slice(a,b+1));}catch(_){}}
+  return null;
+}
+async function tryOne(url){
+  const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),8000);
+  try{
+    const r=await fetch(url,{cache:'no-store',signal:ctrl.signal});clearTimeout(to);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const txt=await r.text();const j=extractJSON(txt);
+    const res=j&&j.chart&&j.chart.result&&j.chart.result[0];
+    if(!res)throw new Error('no chart data');
+    return res;
+  }catch(e){clearTimeout(to);throw e;}
+}
+async function getQuote(sym){
+  const tried=[];
+  for(const src of sources(sym)){
+    try{const res=await tryOne(src.url);lastSource=src.name;return res;}
+    catch(e){tried.push(src.name);}
+  }
+  const err=new Error('all sources failed');err.tried=tried;throw err;
+}
+function parseResult(res){
+  const meta=res.meta||{};
+  const pc=meta.chartPreviousClose ?? meta.previousClose ?? 0;
+  const reg=meta.regularMarketPrice ?? 0;
+  let last=reg;
+  try{
+    const q=res.indicators.quote[0].close;
+    for(let k=q.length-1;k>=0;k--){if(q[k]!=null){last=q[k];break;}}
+  }catch(_){}
+  return {reg,pc,last};
+}
+
+// ── Fetch all ──
 async function fetchAll() {
   const btn = document.getElementById('refresh-btn');
   const ico = document.getElementById('refresh-ico');
   const st  = document.getElementById('status-txt');
-  btn.disabled=true; ico.classList.add('spinning'); st.textContent='Fetching live prices…'; st.className='status-txt';
+  btn.disabled=true; ico.classList.add('spinning'); st.textContent='Fetching prices…'; st.className='status-txt';
 
+  const state = mktState();
   try {
-    const results = await Promise.all(SYMS.map(s=>fetchQuote(s).then(d=>({s,d}))));
-    results.forEach(({s,d})=>{
-      if(!d||!d.c) return;
-      renderPrice(s, d.c, d.pc);
+    const results = await Promise.all(SYMS.map(async s=>{
+      try{return {s, r:parseResult(await getQuote(s))};}
+      catch(e){return {s, e};}
+    }));
+    let ok=0;
+    results.forEach(({s,r,e})=>{
+      if(e||!r) return;
+      ok++;
+      const headline = (state==='open') ? (r.reg||r.last) : (r.last||r.reg);
+      renderPrice(s, headline, r.pc, state);
     });
+    if(ok===0) throw new Error('no data from any source');
+
     const now = new Date();
     document.getElementById('ts-val').textContent =
       now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' ET';
-    document.getElementById('live-badge').style.display = mkt()==='open'?'flex':'none';
-    st.textContent=''; 
+    document.getElementById('live-badge').style.display = state==='open'?'flex':'none';
+    document.getElementById('src-line').textContent = 'source: '+lastSource;
+    st.textContent='';
     startCountdown();
   } catch(e) {
-    st.textContent = '⚠ Error: '+e.message+'. Check API key or open via https://';
+    const extra = e.tried ? ' · tried: '+e.tried.join(', ') : '';
+    st.textContent = '⚠ '+e.message+extra+'. Riapri via https:// o imposta SELF_PROXY';
     st.className='status-txt err-txt';
   }
 
   btn.disabled=false; ico.classList.remove('spinning');
 }
 
-// ── WebSocket (live ticks when market open) ──
-function connectWS() {
-  if(mkt()!=='open') return;
-  ws = new WebSocket(`wss://ws.finnhub.io?token=${KEY}`);
-  ws.onopen = ()=>{
-    SYMS.forEach(s=>ws.send(JSON.stringify({type:'subscribe',symbol:s})));
-    document.getElementById('live-badge').style.display='flex';
-  };
-  ws.onmessage = e=>{
-    const msg = JSON.parse(e.data);
-    if(msg.type!=='trade'||!msg.data) return;
-    msg.data.forEach(t=>{
-      if(SYMS.includes(t.s)) renderPrice(t.s, t.p);
-    });
-    const now=new Date();
-    document.getElementById('ts-val').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' ET';
-  };
-  ws.onerror = ()=>{ ws=null; };
-  ws.onclose = ()=>{ ws=null; };
-}
-
 // ── Countdown ──
 function startCountdown() {
   if(cdTimer) clearInterval(cdTimer);
-  const interval = 20;
-  cdVal = interval;
+  cdVal = REFRESH;
   const row = document.getElementById('countdown-row');
   const txt = document.getElementById('cd-txt');
   const bar = document.getElementById('cbar');
   row.style.display='flex';
   function tick(){
-    const pct=(cdVal/interval)*100;
+    const pct=(cdVal/REFRESH)*100;
     bar.style.width=pct+'%';
     txt.textContent=cdVal>60?Math.ceil(cdVal/60)+'m next':cdVal+'s next';
     if(cdVal<=0){clearInterval(cdTimer);fetchAll();}
@@ -361,16 +529,11 @@ function startCountdown() {
   cdTimer=setInterval(tick,1000);
 }
 
-// ── Auto-reconnect WS ──
-setInterval(()=>{
-  if(mkt()==='open'&&!ws) connectWS();
-},5000);
-
 // ── Init ──
 updatePill();
-setInterval(updatePill,60000);
-calcTotal();
-fetchAll().then(()=>connectWS());
+setInterval(updatePill,30000);
+loadQty();
+fetchAll();
 </script>
 </body>
 </html>
